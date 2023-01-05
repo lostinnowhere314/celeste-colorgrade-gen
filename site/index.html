@@ -4,51 +4,32 @@
 	<meta charset="utf-8" />
 	<title>Celeste colorgrade generator</title>
 	<link rel="stylesheet" href="styles.css" />
+	<link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
 <body style="margin: 0px;">
 	<center>
 	<h2>Celeste Colorgrade Generator</h2>
 	
-	<div id="items" class="box_container">
+	<div id="process_items" class="step_box_container">
 		<!-- Generation steps go here -->
-		<div class="box">
-			<strong>8-value recolor</strong>
-			<br>
-			<label for="black">Black: </label>
-			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="000000" size=4>
-			<label for="white">White: </label>
-			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="FFFFFF" size=4>
-			<br>
-			<label for="red">Red: </label>
-			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="FF0000" size=4>
-			<label for="green">Green: </label>
-			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="00FF00" size=4>
-			<br>
-			<label for="blue">Blue: </label>
-			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="0000FF" size=4>
-			<label for="yellow">Yellow: </label>
-			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="FFFF00" size=4>
-			<br>
-			<label for="magenta">Magenta: </label>
-			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="FF00FF" size=4>
-			<label for="cyan">Cyan: </label>
-			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="00FFFF" size=4>
-			<div align="right">
-				<button onclick="placeholder()">X</button>
-			</div>
-		</div>
 	</div>
 	
-	<div>
-		
-	</div>
+	<!-- Buttons -->
+	<p>
+		Add steps:
+		<br>
+		<button py-click="create_process_step('simple-recolor')" id='simple-recolor'>Simple recolor</button>
+		<button py-click="create_process_step('8-value-recolor')" id='8-value-recolor'>8-value recolor</button>
+	</p>
 	
-	<button onclick = "placeholder()">
+	<p>
+	<button onclick = "generate()">
 		Generate
 	</button>
-
+	</p>
 	<p>
-		<canvas id="output_image">Error: unsupported browser</canvas>
+		<canvas id="output_image">Error: browser does not support canvas element</canvas>
 		<div id="error_message"></div>
 	</p>
 	
@@ -56,9 +37,60 @@
 	
 	<!-- Put documentation/how-to below here -->
 	
+	<h3>How to use</h3>
+	
+	<em>todo</em>
+	
+	<p class="site-footer">
+		Created by Lost in Nowhere
+		<br>
+		<a href="https://github.com/lostinnowhere314/celeste-colorgrade-gen">Source code</a>
+		<br>
+		Powered by <a href="https://pyscript.net/">PyScript</a> and GitHub Pages
+	</p>
 </body>
 
-<script src="./index.js"></script>
+<script>
+	var canvas = document.getElementById("output_image");
+	canvas.width = 256;
+	canvas.height = 16;
+
+	// Initialize the canvas
+	var canvas_ctx = canvas.getContext("2d");
+	canvas_ctx.fillStyle = "#000000";
+	canvas_ctx.fillRect(0, 0, 256, 16);
+	
+	var process_items = document.getElementById("process_items");
+
+	function placeholder() {
+		alert("hi, this does not work yet, sorry");
+	}
+	
+	// Wrapper function that works better for dynamically created tags
+	function remove_process_step(process_id) {
+		pyscript.runtime.globals.get('remove_process_step')(process_id)
+	}
+	
+	function generate() {
+		pyscript.runtime.globals.get('generate')()
+	}
+	
+</script>
+
+<py-config>
+	packages = ["numpy"]
+	[[fetch]]
+	from = "http://127.0.0.1:4000/"
+	files = ["colorgrade_gen.py"]
+</py-config>
+
+<py-script>
+	from colorgrade_gen import *
+	
+	write_colorgrade(get_default_colorgrade())
+	
+	create_process_step('8-value-recolor')
+</py-script>
 
 
 </html>
