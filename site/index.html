@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Celeste colorgrade generator</title>
+	<link rel="stylesheet" href="styles.css" />
+</head>
+<body style="margin: 0px;">
+	<center>
+	<h2>Celeste Colorgrade Generator</h2>
+	
+	<div id="items" class="box_container">
+		<!-- Generation steps go here -->
+		<div class="box">
+			<strong>8-value recolor</strong>
+			<br>
+			<label for="black">Black: </label>
+			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="000000" size=4>
+			<label for="white">White: </label>
+			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="FFFFFF" size=4>
+			<br>
+			<label for="red">Red: </label>
+			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="FF0000" size=4>
+			<label for="green">Green: </label>
+			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="00FF00" size=4>
+			<br>
+			<label for="blue">Blue: </label>
+			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="0000FF" size=4>
+			<label for="yellow">Yellow: </label>
+			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="FFFF00" size=4>
+			<br>
+			<label for="magenta">Magenta: </label>
+			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="FF00FF" size=4>
+			<label for="cyan">Cyan: </label>
+			<input type="text" name="c" id="c" pattern="[0-9a-fA-F]{6}" value="00FFFF" size=4>
+			<div align="right">
+				<button onclick="placeholder()">X</button>
+			</div>
+		</div>
+	</div>
+	
+	<div>
+		
+	</div>
+	
+	<button onclick = "placeholder()">
+		Generate
+	</button>
+
+	<p>
+		<canvas id="output_image">Error: unsupported browser</canvas>
+		<div id="error_message"></div>
+	</p>
+	
+	<p>To save the colorgrade, right click and select 'Save image as...' (or equivalent)</p>
+	
+	<!-- Put documentation/how-to below here -->
+	
+</body>
+
+<script src="./index.js"></script>
+
+
+</html>

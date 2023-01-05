@@ -1,0 +1,13 @@
+.box{
+	width: 300px;
+	border: 2px solid black;
+	margin: 1px;
+	padding: 1px;
+	text-align: left;
+}
+.box_container{
+	width: 308px;
+	border: 2px solid black;
+	margin: 0;
+	padding: 2px;
+}
