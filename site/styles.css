@@ -1,13 +1,27 @@
-.box{
+.step_box{
 	width: 300px;
 	border: 2px solid black;
-	margin: 1px;
-	padding: 1px;
+	margin: 2px;
+	padding: 3px;
 	text-align: left;
 }
-.box_container{
-	width: 308px;
+.step_box_container{
+	width: 315px;
 	border: 2px solid black;
 	margin: 0;
-	padding: 2px;
+	padding: 0;
+}
+.step_box_button_container{
+	width: 300px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.explanation{
+	text-align: left;
+	width: 500px;
+}
+.site-footer{
+	font-size: 8pt;
+	text-align: center;
 }
