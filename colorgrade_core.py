@@ -31,14 +31,17 @@ def parse_color(color_str):
     TODO also support float values
     """
     # First, check if it's comma-separated float values
-    if color_str.count(',') == 2:
-        return tuple(float(v) for v in color_str.split(','))
-    else:
-        # Should be a hex string
-        assert len(color_str) == 6, 'invalid input string'
-        return tuple(
-            int(f"0x{color_str[2*i:2*i+2]}", base=16) / 255 for i in range(3)
-        )
+    try:
+        if color_str.count(',') == 2:
+            return tuple(float(v) for v in color_str.split(','))
+        else:
+            # Should be a hex string
+            assert len(color_str) == 6, 'invalid input string'
+            return tuple(
+                int(f"0x{color_str[2*i:2*i+2]}", base=16) / 255 for i in range(3)
+            )
+    except Exception as e:
+        raise ValueError(f"invalid color string '{color_str}'") from e
         
 def rgb_to_hsv(colors):
     """

@@ -1,3 +1,27 @@
+body {
+	background-color: #503F7F;
+}
+input[type="text"], textarea {
+	background-color: #C5BCD6; 
+}
+button {
+	background-color: #C5BCD6;
+}
+.body_contents {
+	width: 500px;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.body_contents_container {
+	width: 540px;
+	text-align: center;
+	background-color: #9C90D1;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
 .step_box{
 	width: 300px;
 	border: 2px solid black;
@@ -10,12 +34,21 @@
 	border: 2px solid black;
 	margin: 0;
 	padding: 0;
+	background-color: #B9B1DD;
 }
 .step_box_button_container{
 	width: 300px;
 	margin: 0;
 	padding: 0;
 	border: 0;
+}
+.error_box{
+	text-align: center;
+	width: 480px;
+	color: red;
+	font-size: 10pt;
+	border: 1px solid red;
+	background-color: #FFC0C0;
 }
 .explanation{
 	text-align: left;
