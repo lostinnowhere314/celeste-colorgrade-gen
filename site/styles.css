@@ -6,10 +6,20 @@
 	text-align: left;
 }
 .step_box_container{
-	width: 308px;
+	width: 315px;
 	border: 2px solid black;
 	margin: 0;
 	padding: 0;
+}
+.step_box_button_container{
+	width: 300px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.explanation{
+	text-align: left;
+	width: 500px;
 }
 .site-footer{
 	font-size: 8pt;
