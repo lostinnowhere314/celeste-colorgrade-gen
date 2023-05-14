@@ -52,6 +52,9 @@ def add_input_field(parent, name, label, value, size=4, **kwargs):
         "input", _type='text', name=name, id=name, value=value, size=size, **kwargs
     ))
 
+def add_input_field_args(parent, name, label, args, **kwargs):
+    add_input_field(parent, name, label, args[name], **kwargs)
+
 ### Abstract class
 
 class ColorgradeProcessStep:
@@ -119,16 +122,23 @@ class CopyThisOne(ColorgradeProcessStep):
         return ""
     
     def has_input(self):
-        """boolean"""
+        """boolean of whether it accepts a single previous step as input"""
         return True
     
     def populate_html_element(self, element, **parameters):
         """
-        Add input fields to the element
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
         """
+        args = {**self.arguments(), **parameters}
         raise NotImplementedError("")
         
     def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        cg_in = cg_steps[self.get_target_index()]
+        
         raise NotImplementedError("")
 
 ############################
@@ -218,4 +228,296 @@ class CGSimpleRecolor(ColorgradeProcessStep):
         cg_out = simple_recolor(cg_in, *colors_scalar)
         
         return cg_out
+
+class CGRecenterColors(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return dict()
+        
+    def title(self):
+        """String title"""
+        return "Recenter Colors"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return True
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element
+        """
+        # This has no additional fields
+        pass
+        
+    def do_processing(self, cg_steps):
+        cg_in = cg_steps[self.get_target_index()]
+        return rescale_to_fill_range(cg_in)
+        
+class CGFill(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return dict(color='FFFFFF')
+        
+    def title(self):
+        """String title"""
+        return "Fill"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return False
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element
+        """
+        args = {**self.arguments(), **parameters}
+        add_input_field(element, 'color', 'Color: ', args['color'], size=4)
+        
+    def do_processing(self, cg_steps):
+        color = parse_color(
+            parse_arguments_from_element(
+                self.element,
+                ['color']
+            )[0]
+        )
+        return get_filled_colorgrade(color)
+
+class CGIfElse(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return {
+            'condition': 'r+g+b > 0.5',
+            'cond-input': '0',
+            'true-input': '-1',
+            'false-input': '-1',
+        }
+        
+    def title(self):
+        """String title"""
+        return "If-Else"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return False
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
+        """
+        args = {**self.arguments(), **parameters}
+        
+        add_input_field(element, 'condition', ' Condition: ', args['condition'], size=24)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field(element, 'cond-input', 'Condition source: ', args['cond-input'], size=2)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field(element, 'true-input', 'Source if true: ', args['true-input'], size=2)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field(element, 'false-input', 'Source if false: ', args['false-input'], size=2)
+        
+    def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        condition, cond_idx, true_idx, false_idx = parse_arguments_from_element(
+            self.element,
+            ['condition', 'cond-input', 'true-input', 'false-input']
+        )
+        cg_true = cg_steps[int(true_idx)]
+        cg_false = cg_steps[int(false_idx)]
+        cg_cond = cg_steps[int(cond_idx)]
+        
+        cg_out = if_else(cg_true, cg_false, cg_cond, condition)
+        
+class CGAdjustRGB(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return {
+            'r-shift': '0.0',
+            'g-shift': '0.0',
+            'b-shift': '0.0',
+        }
+        
+    def title(self):
+        """String title"""
+        return "Adjust RGB"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return True
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
+        """
+        args = {**self.arguments(), **parameters}
+        
+        add_input_field_args(element, 'r-shift', ' R shift: ', args, size=4)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 'g-shift', ' G shift: ', args, size=4)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 'b-shift', ' B shift: ', args, size=4)
+        
+    def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        cg_in = cg_steps[self.get_target_index()]
+        
+        shifts = [
+            float(val)
+            for val in parse_arguments_from_element(
+                self.element,
+                ['r-shift', 'g-shift', 'b-shift']
+            )
+        ]
+        
+        return adjust_rgb(cg_in, *shifts)
+
+class CGAdjustHSV(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return {
+            'h-shift': '0.0',
+            's-shift': '0.0',
+            'v-shift': '0.0',
+        }
+        
+    def title(self):
+        """String title"""
+        return "Adjust HSV"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return True
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
+        """
+        args = {**self.arguments(), **parameters}
+        
+        add_input_field_args(element, 'h-shift', ' H shift: ', args, size=4)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 's-shift', ' S shift: ', args, size=4)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 'v-shift', ' V shift: ', args, size=4)
+        
+        
+    def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        cg_in = cg_steps[self.get_target_index()]
+        
+        shifts = [
+            float(val)
+            for val in parse_arguments_from_element(
+                process_step.html_element,
+                ['h-shift', 's-shift', 'v-shift']
+            )
+        ]
+        
+        return adjust_hsv(cg_in, *shifts)
+
+class CGBrightnessContrast(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return {
+            'bright-shift': '0.0',
+            'con-shift': '0.0',
+        }
+        
+    def title(self):
+        """String title"""
+        return "Brightness/Contrast"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return True
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
+        """
+        args = {**self.arguments(), **parameters}
+        add_input_field_args(element, 'bright-shift', ' Brightness: ', args, size=4)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 'con-shift', ' Contrast: ', args, size=4)
+    
+        
+    def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        cg_in = cg_steps[self.get_target_index()]
+        
+        shifts = [
+            float(val)
+            for val in parse_arguments_from_element(
+                process_step.html_element,
+                ['bright-shift', 'con-shift']
+            )
+        ]
+        
+        return brightness_contrast(cg_in, *shifts)
+
+class CGCustomMap(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return {
+            'new-r': 'r',
+            'new-g': 'g',
+            'new-b': 'b',
+        }
+        
+    def title(self):
+        """String title"""
+        return "Custom"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return True
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
+        """
+        args = {**self.arguments(), **parameters}
+        add_input_field_args(element, 'new-r', ' New R: ', args, size=24)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 'new-g', ' New G: ', args, size=24)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 'new-b', ' New B: ', args, size=24)
+        
+    def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        cg_in = cg_steps[self.get_target_index()]
+        
+        expressions = parse_arguments_from_element(
+            process_step.html_element,
+            ['new-r', 'new-g', 'new-b']
+        )
+        
+        return custom_rgb_adjust(cg_in, *expressions)
 
