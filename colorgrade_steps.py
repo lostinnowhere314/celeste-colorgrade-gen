@@ -61,12 +61,13 @@ class ColorgradeProcessStep:
     """
     Template class for a colorgrade processing step.
     """
-    def __init__(self, process_id, element):
+    def __init__(self, process_id, element, process_type_internal):
         """
         Creates a new process step
         """
         self.process_id = process_id
         self.element = element
+        self.process_type_internal = process_type_internal
     
     def get_target_index(self):
         """
@@ -105,7 +106,7 @@ class ColorgradeProcessStep:
         args = self.arguments()
         vals = parse_arguments_from_element(self.element, args.keys())
         
-        return {
+        return process_type_internal, {
             k:v for k,v in zip(args.keys(), vals)
         }
 
@@ -333,7 +334,7 @@ class CGIfElse(ColorgradeProcessStep):
         cg_false = cg_steps[int(false_idx)]
         cg_cond = cg_steps[int(cond_idx)]
         
-        cg_out = if_else(cg_true, cg_false, cg_cond, condition)
+        return if_else(cg_true, cg_false, cg_cond, condition)
         
 class CGAdjustRGB(ColorgradeProcessStep):
     def arguments(self):
@@ -425,7 +426,7 @@ class CGAdjustHSV(ColorgradeProcessStep):
         shifts = [
             float(val)
             for val in parse_arguments_from_element(
-                process_step.html_element,
+                self.element,
                 ['h-shift', 's-shift', 'v-shift']
             )
         ]
@@ -470,7 +471,7 @@ class CGBrightnessContrast(ColorgradeProcessStep):
         shifts = [
             float(val)
             for val in parse_arguments_from_element(
-                process_step.html_element,
+                self.element,
                 ['bright-shift', 'con-shift']
             )
         ]
@@ -515,7 +516,7 @@ class CGCustomMap(ColorgradeProcessStep):
         cg_in = cg_steps[self.get_target_index()]
         
         expressions = parse_arguments_from_element(
-            process_step.html_element,
+            self.element,
             ['new-r', 'new-g', 'new-b']
         )
         
