@@ -522,3 +522,89 @@ class CGCustomMap(ColorgradeProcessStep):
         
         return custom_rgb_adjust(cg_in, *expressions)
 
+class CGPalettize(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return {
+            'colors': '000000; FFFFFF'
+        }
+        
+    def title(self):
+        """String title"""
+        return "Palettize"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return True
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
+        """
+        args = {**self.arguments(), **parameters}
+        add_input_field_args(element, 'colors', ' Colors: ', args, size=26)
+        
+    def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        cg_in = cg_steps[self.get_target_index()]
+        
+        color_string = parse_arguments_from_element(
+            self.element,
+            ['colors']
+        )[0].split(';')
+        
+        colors = [
+            parse_color(s.strip()) for s in color_string if len(s.strip()) > 0
+        ]
+        
+        return palettize(cg_in, colors)
+
+class CGReduceColors(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return {
+            'n-colors': '10',
+            'seed': '97187',
+        }
+        
+    def title(self):
+        """String title"""
+        return "Reduce Colors"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return True
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
+        """
+        args = {**self.arguments(), **parameters}
+        add_input_field_args(element, 'n-colors', ' # Colors: ', args, size=4)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 'seed', ' Random seed: ', args, size=8)
+        
+    def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        cg_in = cg_steps[self.get_target_index()]
+        
+        n_colors, seed = [
+            int(val)
+            for val in parse_arguments_from_element(
+                self.element,
+                ['n-colors', 'seed']
+            )
+        ]
+        
+        return reduce_colors(cg_in, n_colors, seed=seed)
+

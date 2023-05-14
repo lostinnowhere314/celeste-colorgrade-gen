@@ -54,6 +54,8 @@ def create_process_step(process_type):
         'adjust-rgb': CGAdjustRGB,
         'adjust-hsv': CGAdjustHSV,
         'brightness-contrast': CGBrightnessContrast,
+        'palettize': CGPalettize,
+        'reduce-colors': CGReduceColors,
         'custom': CGCustomMap,
     }[process_type](new_process_id, element, process_type)
     
