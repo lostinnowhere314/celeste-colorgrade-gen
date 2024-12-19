@@ -15,8 +15,62 @@ process_steps = []
 no_input_process_types = {'if-else', 'fill'}
 
 # get needed globals from the javascript
-from js import canvas, canvas_ctx, process_items, document, error_message
+import js
+from js import canvas, canvas_ctx, process_items, document, error_message, clear_err_message
+from pyscript import when
 
+#from pyscript.ffi import create_proxy
+#document.proxy_generate = create_proxy(generate)
+
+@when("click", "#generate")
+def handler_generate(event):
+    clear_err_message()
+    generate()
+
+@when("click", "#simplerecolor")
+def handler_simple_recolor(event):
+    clear_err_message()
+    create_process_step('simple-recolor')
+@when("click", "#eightvaluerecolor")
+def handler_8_value_recolor(event):
+    clear_err_message()
+    create_process_step('8-value-recolor')
+@when("click", "#recentercolors")
+def handler_recenter_colors(event):
+    clear_err_message()
+    create_process_step('recenter-colors')
+@when("click", "#fill")
+def handler_fill(event):
+    clear_err_message()
+    create_process_step('fill')
+@when("click", "#ifelse")
+def handler_if_else(event):
+    clear_err_message()
+    create_process_step('if-else')
+@when("click", "#adjustrgb")
+def handler_adjust_rgb(event):
+    clear_err_message()
+    create_process_step('adjust-rgb')
+@when("click", "#adjusthsv")
+def handler_adjust_hsv(event):
+    clear_err_message()
+    create_process_step('adjust-hsv')
+@when("click", "#brightnesscontrast")
+def handler_brightness_contrast(event):
+    clear_err_message()
+    create_process_step('brightness-contrast')
+@when("click", "#custom")
+def handler_custom(event):
+    clear_err_message()
+    create_process_step('custom')
+
+def setup_page():
+	write_colorgrade(get_default_colorgrade())
+	create_process_step('8-value-recolor')
+	hide_loading_overlay()
+
+def hide_loading_overlay():
+    js.JsLoadingOverlay.hide()
 
 # Wrapper for displaying errors to our html element
 def display_errors(fn):
@@ -506,4 +560,5 @@ def show_error_text(error_text):
     """
     error_message.innerHTML = error_text
     error_message.style.display = 'block'
+    
     

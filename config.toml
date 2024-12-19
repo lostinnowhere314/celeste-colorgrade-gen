@@ -1,0 +1,4 @@
+packages = ["numpy"]
+[[fetch]]
+from = "http://127.0.0.1:4000/"
+files = ["colorgrade_gen.py", "colorgrade_core.py"]
