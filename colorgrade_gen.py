@@ -325,5 +325,7 @@ def hide_error():
     """
     error_message.style.display = 'hide'
     
+# Proxy functions
 js.move_step_up = create_proxy(move_step_up)
 js.move_step_down = create_proxy(move_step_down)
+js.remove_process_step_proxy = create_proxy(remove_process_step)

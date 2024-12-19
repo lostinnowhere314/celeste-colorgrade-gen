@@ -176,7 +176,7 @@
 	
 	function remove_process_step(process_id) {
 		clear_err_message()
-		pyscript.runtime.globals.get('remove_process_step')(process_id)
+		remove_process_step_proxy(process_id)
 	}
 	
 	function generate() {
