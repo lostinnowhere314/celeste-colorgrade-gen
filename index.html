@@ -179,17 +179,16 @@
 	function generate() {
 		clear_err_message()
 		proxy_generate()
-		// pyscript.runtime.globals.get('generate')()
 	}
 	
 	function move_up(process_id) {
 		clear_err_message()
-		pyscript.runtime.globals.get('move_step_up')(process_id)
+		move_step_up(process_id)
 	}
 	
 	function move_down(process_id) {
 		clear_err_message()
-		pyscript.runtime.globals.get('move_step_down')(process_id)
+		move_step_down(process_id)
 	}
 	
 </script>
