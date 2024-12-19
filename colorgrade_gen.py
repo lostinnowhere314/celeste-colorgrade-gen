@@ -18,6 +18,7 @@ no_input_process_types = {'if-else', 'fill'}
 import js
 from js import canvas, canvas_ctx, process_items, document, error_message, clear_err_message
 from pyscript import when
+from pyscript.ffi import create_proxy
 
 #from pyscript.ffi import create_proxy
 #document.proxy_generate = create_proxy(generate)
@@ -68,6 +69,7 @@ def setup_page():
 	write_colorgrade(get_default_colorgrade())
 	create_process_step('8-value-recolor')
 	hide_loading_overlay()
+
 
 def hide_loading_overlay():
     js.JsLoadingOverlay.hide()
@@ -394,7 +396,7 @@ def move_step_up(process_id):
     process_items.insertBefore(step.html_element, step.html_element.previousElementSibling);
     
     regenerate_display_indices()
-    hide_error()
+    clear_err_message()
     
 @display_errors
 def move_step_down(process_id):
@@ -561,4 +563,5 @@ def show_error_text(error_text):
     error_message.innerHTML = error_text
     error_message.style.display = 'block'
     
-    
+js.move_step_up = create_proxy(move_step_up)
+js.move_step_down = create_proxy(move_step_down)
