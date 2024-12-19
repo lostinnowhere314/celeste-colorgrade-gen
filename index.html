@@ -4,8 +4,9 @@
 	<meta charset="utf-8" />
 	<title>Celeste colorgrade generator</title>
 	<link rel="stylesheet" href="styles.css" />
-	<link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+	<link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css" />
+	<script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-loading-overlay@1.1.0/dist/js-loading-overlay.min.js"></script>
 </head>
 <body style="margin: 0px;">
 	<center>
@@ -23,22 +24,22 @@
 		<p>
 			Add steps:
 			<br>
-			<button onclick="create_process_step('simple-recolor')" id='simple-recolor'>Simple recolor</button>
-			<button onclick="create_process_step('8-value-recolor')" id='8-value-recolor'>8-value recolor</button>
+			<button id='simplerecolor'>Simple recolor</button>
+			<button id='eightvaluerecolor'>8-value recolor</button>
 			<br>
-			<button onclick="create_process_step('recenter-colors')">Recenter colors</button>
-			<button onclick="create_process_step('fill')">Fill</button>
-			<button onclick="create_process_step('if-else')">Condition</button>
+			<button id='recentercolors'>Recenter colors</button>
+			<button id='fill'>Fill</button>
+			<button id='ifelse'>Condition</button>
 			<br>
-			<button onclick="create_process_step('adjust-rgb')">Adjust RGB</button>
-			<button onclick="create_process_step('adjust-hsv')">Adjust HSV</button>
+			<button id='adjustrgb'>Adjust RGB</button>
+			<button id='adjusthsv'>Adjust HSV</button>
 			<br>
-			<button onclick="create_process_step('brightness-contrast')">Brightness/Contrast</button>
-			<button onclick="create_process_step('custom')">Custom RGB map</button>
+			<button id='brightnesscontrast'>Brightness/Contrast</button>
+			<button id='custom'>Custom RGB map</button>
 		</p>
 		
 		<p>
-		<button onclick = "generate()">
+		<button id="generate">
 			Generate
 		</button>
 		</p>
@@ -139,6 +140,8 @@
 </body>
 
 <script>
+	JsLoadingOverlay.show();
+
 	var canvas = document.getElementById("output_image");
 	canvas.width = 256;
 	canvas.height = 16;
@@ -155,49 +158,45 @@
 		alert("hi, this does not work yet, sorry");
 	}
 	
+	function clear_err_message() {
+		error_message.style.display = 'none'
+	}
+	
 	// Wrapper functions; they have better error handling and work properly when created dynamically
 	function create_process_step(process_type) {
-		error_message.style.display = 'none'
+		clear_err_message()
 		pyscript.runtime.globals.get('create_process_step')(process_type)
 		
 	}
 	
 	function remove_process_step(process_id) {
-		error_message.style.display = 'none'
+		clear_err_message()
 		pyscript.runtime.globals.get('remove_process_step')(process_id)
 	}
 	
 	function generate() {
-		error_message.style.display = 'none'
-		pyscript.runtime.globals.get('generate')()
+		clear_err_message()
+		proxy_generate()
+		// pyscript.runtime.globals.get('generate')()
 	}
 	
 	function move_up(process_id) {
-		error_message.style.display = 'none'
+		clear_err_message()
 		pyscript.runtime.globals.get('move_step_up')(process_id)
 	}
 	
 	function move_down(process_id) {
-		error_message.style.display = 'none'
+		clear_err_message()
 		pyscript.runtime.globals.get('move_step_down')(process_id)
 	}
 	
 </script>
 
-<py-config>
-	packages = ["numpy"]
-	[[fetch]]
-	from = "https://lostinnowhere314.github.io/celeste-colorgrade-gen/"
-	files = ["colorgrade_gen.py", "colorgrade_core.py"]
-</py-config>
-
-<py-script>
+<script type="py" config="./config.toml">
 	from colorgrade_gen import *
 	
-	write_colorgrade(get_default_colorgrade())
-	
-	create_process_step('8-value-recolor')
-</py-script>
+	setup_page()
+</script>
 
 
 </html>
