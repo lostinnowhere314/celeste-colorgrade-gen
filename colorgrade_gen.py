@@ -12,12 +12,10 @@ no_input_process_types = {'if-else', 'fill'}
 
 # get needed globals from the javascript
 import js
-from js import canvas, canvas_ctx, process_items, document, error_message, clear_err_message
+from js import canvas, canvas_ctx, process_items, document, error_message, clear_err_message, serialize_textbox
 from pyscript import when
 from pyscript.ffi import create_proxy
 
-#from pyscript.ffi import create_proxy
-#document.proxy_generate = create_proxy(generate)
 
 @when("click", "#generate")
 def handler_generate(event):
@@ -98,8 +96,16 @@ def display_errors(fn):
 @display_errors
 def create_process_step(process_type):
     """
-    Creates a process item
+    Creates a process item with default parameters
     """
+    create_process_step_with_params(process_type)
+
+@display_errors
+def create_process_step_with_params(process_type, **params):
+    """
+    Creates a process item with specified parameters
+    """
+    # TODO make this work
     global new_process_id
     
     ## Create the new element
@@ -136,7 +142,7 @@ def create_process_step(process_type):
     ))
     
     # Populate with method-specific tags
-    process_step.populate_html_element(element)
+    process_step.populate_html_element(element, **params)
     
     ## Row for the source colorgrade and the buttons
     last_line_supercontainer = create_element_with_tags('table', _class='step_box_button_container')
@@ -321,11 +327,54 @@ def show_error_text(error_text):
     
 def hide_error():
     """
-    Displays the given text to the error box
+    Hides any current error message
     """
     error_message.style.display = 'hide'
     
+@display_errors
+def import_serialization():
+    """
+    Reads from `serialize_textbox` element to generate a list 
+    of steps, and then populates the list in the html
+    """
+    ser_list = None
+    try:
+        # Decode the objects
+        # Done separately to avoid mangling current steps if this fails
+        # eval() is ok here because they're wrecking their own computer if they do anything
+        ser_list = eval(serialize_textbox.value)
+    except Exception as e:
+        raise Exception("Unable to parse steps to be imported") from e
+    
+    # Create list of steps
+    global process_steps
+    
+    # Clear old steps
+    # TODO make this its own function, add a button to do this
+    for item in process_steps:
+        item.element.remove()
+    process_steps = list()
+    
+    for name, params in ser_list:
+        create_process_step_with_params(name, **params)
+    
+@display_errors
+def export_serialization():
+    """
+    Creates a text representation of all current steps and places it 
+    in the `serialize_textbox` element.
+    """
+    ser_list = [step.serialize() for step in process_steps]
+    
+    ser_string = repr(ser_list)
+    
+    serialize_textbox.value = ser_string
+
+
 # Proxy functions
 js.move_step_up = create_proxy(move_step_up)
 js.move_step_down = create_proxy(move_step_down)
+js.create_process_step_proxy = create_proxy(create_process_step)
 js.remove_process_step_proxy = create_proxy(remove_process_step)
+js.import_serialization_proxy = create_proxy(import_serialization)
+js.export_serialization_proxy = create_proxy(export_serialization)

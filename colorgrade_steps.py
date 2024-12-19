@@ -106,7 +106,7 @@ class ColorgradeProcessStep:
         args = self.arguments()
         vals = parse_arguments_from_element(self.element, args.keys())
         
-        return process_type_internal, {
+        return self.process_type_internal, {
             k:v for k,v in zip(args.keys(), vals)
         }
 
