@@ -53,6 +53,19 @@
 		
 		<p>To save the colorgrade, right click and select 'Save image as...' (or equivalent)</p>
 		
+		<h2> Import/Export Steps </h2>
+		<div id="serialization-container">
+			<!-- Serialized steps go here -->
+			<textarea name="serialized-text" cols="40" rows="1"></textarea>
+			<br>
+			<button id="ser-import" onclick="import_serialization()">
+			Import
+			</button>
+			<button id="ser-export" onclick="export_serialization()">
+			Export
+			</button>
+		</div>
+		
 		<!-- Put documentation/how-to below here -->
 		<h2>How to use</h2>
 		<div class="explanation">
@@ -157,7 +170,8 @@
 	canvas_ctx.fillRect(0, 0, 256, 16);
 	
 	var process_items = document.getElementById("process_items");
-	var error_message = document.getElementById("error_message")
+	var error_message = document.getElementById("error_message");
+	var serialize_textbox = document.getElementById("serialized-text");
 
 	function placeholder() {
 		alert("hi, this does not work yet, sorry");
@@ -170,8 +184,7 @@
 	// Wrapper functions; they have better error handling and work properly when created dynamically
 	function create_process_step(process_type) {
 		clear_err_message()
-		pyscript.runtime.globals.get('create_process_step')(process_type)
-		
+		create_process_step_proxy(process_type)
 	}
 	
 	function remove_process_step(process_id) {
@@ -192,6 +205,16 @@
 	function move_down(process_id) {
 		clear_err_message()
 		move_step_down(process_id)
+	}
+	
+	function import_serialization() {
+		clear_err_message()
+		import_serialization_proxy()
+	}
+	
+	function export_serialization() {
+		//clear_err_message()
+		export_serialization_proxy()
 	}
 	
 </script>
