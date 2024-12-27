@@ -344,7 +344,7 @@ def import_serialization():
         # eval() is ok here because they're wrecking their own computer if they do anything
         ser_list = eval(serialize_textbox.value)
     except Exception as e:
-        raise Exception("Unable to parse steps to be imported") from e
+        raise Exception("unable to load; invalid import steps") from e
     
     # Create list of steps
     global process_steps

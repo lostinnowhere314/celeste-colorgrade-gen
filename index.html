@@ -28,17 +28,17 @@
 			<button id='eightvaluerecolor'>8-value recolor</button>
 			<br>
 			<button id='recentercolors'>Recenter colors</button>
-			<button id='fill'>Fill</button>
-			<button id='ifelse'>Condition</button>
+			<button id='brightnesscontrast'>Brightness/Contrast</button>
 			<br>
 			<button id='adjustrgb'>Adjust RGB</button>
 			<button id='adjusthsv'>Adjust HSV</button>
 			<br>
 			<button id='custom'>Custom RGB map</button>
-			<button id='palettize'>Palettize</button>
+			<button id='ifelse'>Condition</button>
+			<button id='fill'>Fill</button>
 			<br>
+			<button id='palettize'>Palettize</button>
 			<button id='reducecolors'>Reduce Colors</button>
-			<button id='brightnesscontrast'>Brightness/Contrast</button>
 		</p>
 		
 		<p>
@@ -56,7 +56,7 @@
 		<h2> Import/Export Steps </h2>
 		<div id="serialization-container">
 			<!-- Serialized steps go here -->
-			<p>Use this to save the steps to produce a colorgrade so that you can come back later</p>
+			<p>Save the steps for later editing</p>
 			<textarea id="serialized-text" cols="40" rows="1"></textarea>
 			<br>
 			<button id="ser-import" onclick="import_serialization()">
@@ -86,17 +86,12 @@
 		<p>
 			<strong>8-value recolor.</strong>
 			This rescales the color cube so that each of the corners are the specified colors.
-			The colors are interpolated linearly between each corner (more specifically, it is multilinear with respect to the RGB color channels).
+			The colors are interpolated linearly between each corner.
 		</p>
 		
 		<p>
 			<strong>Recenter colors.</strong>
 			This rescales the colors in the input colorgrade so that the R, G, and B values each occupy the full range of [0, 1].
-		</p>
-		
-		<p>
-			<strong>Fill.</strong>
-			Creates a colorgrade filled with the specified color.
 		</p>
 		
 		<p>
@@ -109,6 +104,13 @@
 		</p>
 		
 		<p>
+			<strong>Custom RGB map.</strong>
+			The three inputs to this effect are mathematical expressions that will be evaluated to get the RGB channels of the output.
+			The RGB channels of the input can be accessed as the variables <tt>r, g, b</tt>.
+			Values for each RGB channel will be between 0 and 1.
+		</p>
+		
+		<p>
 			<strong>Condition.</strong>
 			This effect accepts a mathematical expression that needs to evaluate to either True or False that determines which colorgrade to take the result color from for each pixel.
 			The colorgrade from <tt>Condition source</tt> is used to evaluate the condition.
@@ -118,17 +120,29 @@
 		</p>
 		
 		<p>
-			<strong>Custom RGB map.</strong>
-			The three inputs to this effect are mathematical expressions that will be evaluated to get the RGB channels of the output.
-			The RGB channels of the input can be accessed as the variables <tt>r, g, b</tt>.
-			Values for each RGB channel will be between 0 and 1.
+			<strong>Fill.</strong>
+			Creates a colorgrade filled with the specified color.
 		</p>
+		
+		<p>
+			<strong>Palettize.</strong>
+			Reduces the number of colors in the colorgrade.
+			The input is a list of colors, separated by semicolons.
+			Each color in the colorgrade is turned into the closest color in the list.
+		</p>
+		
+		<p>
+			<strong>Reduce Colors.</strong>
+			Reduces the number of colors in the colorgrade (chosen randomly from the input colorgrade); similar to Palettize.
+			Each input color is mapped into the output color closest in color.
+		</p>
+		
 		
 		<h3>Field types</h3>
 		<p>
 			<strong>Colors.</strong>
 			Most fields expect a color.
-			The two supported formats for colors are either a hex code (e.g. "ffa037"; this is not case-sensitive) or comma-separated decimal values in the interval [0,1] (e.g. "1.0, 0.5, 0.3"; this does not care about spacing).
+			The two supported formats for colors are either a hex code (e.g. "ffa037"; this is not case-sensitive) or comma-separated values between 0 and 1 (e.g. "1.0, 0.5, 0.3"; this does not care about spacing).
 		</p>
 		
 		<p>
@@ -142,7 +156,8 @@
 			<strong>Expressions.</strong>
 			Some fields expect an expression, which will be evaluated using Python syntax.
 			Each one has the variables <tt>r, g, b</tt>, holding the values of each color channel of the input, available to use.
-			These color channels are represented 
+			These color channels are represented as decimal values between 0 and 1.
+			
 			This supports usual mathematical operations <tt>+, -, *, /</tt>; exponentiation using <tt>**</tt>; comparison operators <tt>&lt;, &lt;=, &gt;, &gt;=, ==</tt>; logical operators <tt>&amp;, |, ~, ^</tt>; use of parentheses <tt>(, )</tt>, a handful of functions (<tt>min, max, abs, clip, sin, cos, tan, sqrt, exp, log, log2, log10</tt>), the constant <tt>pi</tt>, and probably some other things I'm forgetting to mention.
 		</p>
 		
