@@ -1,4 +1,4 @@
 packages = ["numpy"]
 [[fetch]]
 from = "https://lostinnowhere314.github.io/celeste-colorgrade-gen/"
-files = ["colorgrade_gen.py", "colorgrade_core.py"]
+files = ["colorgrade_gen.py", "colorgrade_core.py", "colorgrade_steps.py"]

@@ -7,6 +7,7 @@ input[type="text"], textarea {
 button {
 	background-color: #C5BCD6;
 }
+textarea { resize: none; }
 .body_contents {
 	width: 500px;
 	text-align: center;
@@ -33,6 +34,13 @@ button {
 	width: 315px;
 	border: 2px solid black;
 	margin: 0;
+	padding: 0;
+	background-color: #B9B1DD;
+}
+.serialization_container{
+	width: 315px;
+	border: 2px solid black;
+	margin: 2px;
 	padding: 0;
 	background-color: #B9B1DD;
 }

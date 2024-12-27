@@ -328,6 +328,30 @@ def custom_rgb_adjust(cg, r_expr, g_expr, b_expr):
     
     return np.stack(result_colors, axis=3)
     
-def palletize(cg, colors, mode=None):
-    raise NotImplementedError("")
+def palettize(cg, colors, mode=None):
+    """
+    `colors`: list of (3,) color arrays, or (n,3) array of colors
+    """
+    colors = np.array(colors,dtype=float)[:,None,None,None,:]
     
+    # Find the distances
+    dists = np.linalg.norm(cg - colors, axis=4)
+    
+    # Find the closest color for each pixel
+    which = np.argmin(dists, axis=0)
+    
+    return colors[which][:,:,:,0,0,0,:]
+    
+def sample_colors(cg, n_colors, seed=91):
+    np.random.seed(seed)
+    points = zip(*np.unravel_index(
+        np.random.choice(16**3, size=n_colors, replace=False),
+        (16,16,16)
+    ))
+    
+    colors = [cg[point] for point in points]
+    return colors
+    
+def reduce_colors(cg, n_colors, seed=91):
+    colors = sample_colors(cg, n_colors, seed=seed)
+    return palettize(cg, colors)
