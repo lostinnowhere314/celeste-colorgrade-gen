@@ -328,6 +328,14 @@ def custom_rgb_adjust(cg, r_expr, g_expr, b_expr):
     
     return np.stack(result_colors, axis=3)
     
+def blend(cg1, cg2, cg_source, blend_expr):
+    r, g, b = sep_rgb(cg_source)
+    
+    blend_val = eval_with(blend_expr, r=r, g=g, b=b, shape=r.shape)
+    blend_val = np.clip(blend_val, 0.0, 1.0)[:,:,:,None]
+    
+    return blend_val * cg2 + (1-blend_val) * cg1
+    
 def palettize(cg, colors, mode=None):
     """
     `colors`: list of (3,) color arrays, or (n,3) array of colors

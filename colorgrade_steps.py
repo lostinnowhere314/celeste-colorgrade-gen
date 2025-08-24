@@ -608,3 +608,53 @@ class CGReduceColors(ColorgradeProcessStep):
         
         return reduce_colors(cg_in, n_colors, seed=seed)
 
+class CGBlend(ColorgradeProcessStep):
+    def arguments(self):
+        """
+        Return a dictionary of the input things and their default values
+        """
+        return {
+            "in-1": "-1",
+            "in-2": "-1",
+            "in-blendval": "0",
+            "blend-expr": "(r+g+b)/3",
+        }
+        
+    def title(self):
+        """String title"""
+        return "Blend"
+    
+    def has_input(self):
+        """boolean of whether it accepts a single previous step as input"""
+        return False
+    
+    def populate_html_element(self, element, **parameters):
+        """
+        Add input fields to the element (modify in-place).
+        Does not need to return anything.
+        """
+        args = {**self.arguments(), **parameters}
+        add_input_field_args(element, 'in-1', ' Input 1: ', args, size=4)
+        add_input_field_args(element, 'in-2', ' Input 2: ', args, size=4)
+        element.appendChild(create_element_with_tags("br"))
+        add_input_field_args(element, 'blend-expr', ' Blend value: ', args, size=8)
+        
+    def do_processing(self, cg_steps):
+        """
+        Return the result of this step
+        """
+        
+        in_1, in_2, in_blend = [
+            int(i) for i in parse_arguments_from_element(
+                self.element,
+                ["in-1","in-2","in-blendval"]
+            )
+        ]
+        
+        expression = parse_arguments_from_element(self.element, ["blend-expr"])
+        
+        cg_in1 = cg_steps[in_1]
+        cg_in2 = cg_steps[in_2]
+        cg_blendval = cg_steps[in_blend]
+        
+        raise blend(cg_in1, cg_in2, cg_blendval, expression)

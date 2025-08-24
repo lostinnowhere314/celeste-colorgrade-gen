@@ -66,6 +66,10 @@ def handler_reducecolors(event):
 def handler_palettize(event):
     clear_err_message()
     create_process_step('palettize')
+@when("click", "#blend")
+def handler_palettize(event):
+    clear_err_message()
+    create_process_step('blend')
 
 def setup_page():
 	write_colorgrade(get_default_colorgrade())
@@ -127,6 +131,7 @@ def create_process_step_with_params(process_type, **params):
         'palettize': CGPalettize,
         'reduce-colors': CGReduceColors,
         'custom': CGCustomMap,
+        'blend': CGBlend,
     }[process_type](new_process_id, element, process_type)
     
     ## Populate the element
